@@ -30,7 +30,6 @@
                 break;
             }
             const parsedMsg = JSON.parse(message.data.toString());//I don't want to know why this has to be moved to a string even though it's already a string.
-            console.log(parsedMsg)
             const author = parsedMsg.author;
             const messageArr = parsedMsg.message;//this is wrapped not sure why
             const chatDiv = document.createElement('div');
