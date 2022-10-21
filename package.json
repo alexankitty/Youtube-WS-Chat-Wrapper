@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "dependencies": {
+    "ws": "^8.9.0",
+    "youtube-chat": "^2.1.1"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.7",
+    "utf-8-validate": "^5.0.10"
+  }
+}

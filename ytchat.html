@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+
+    </body>
+
+    <script defer>
+        const id = 'jfKfPfyJRdk';//Either the channel ID or the live stream id. There is some logic to determine which. 
+        const chatSocket = new WebSocket('ws://127.0.0.1:8080')
+        const params = {id: id}
+        chatSocket.onmessage = function(message){
+            if(message.data == 'Connected') {
+                console.log(message.data);
+                return;
+            }
+            switch(message.data){
+                case "400":
+                    console.log("Bad request: Live stream may be unavailable, attempting to retry.")
+                    setTimeout(startChat, 5000) //Retrying after 5 seconds.
+                break;
+                case "401":
+                    console.log("Malformed data received by server.")
+                    chatSocket.close();
+                break;
+                case "503":
+                    console.log("Too many connections, closing");
+                    chatSocket.close();
+                break;
+            }
+            const parsedMsg = JSON.parse(message.data.toString());//I don't want to know why this has to be moved to a string even though it's already a string.
+            console.log(parsedMsg)
+            const author = parsedMsg.author;
+            const messageArr = parsedMsg.message;//this is wrapped not sure why
+            const chatDiv = document.createElement('div');
+            const meta = document.createElement('span');
+            chatDiv.appendChild(meta);
+            if(author.thumbnail) {
+                const pfp = document.createElement('img');
+                pfp.src = author.thumbnail.url;
+                meta.appendChild(pfp)
+            }
+            if(author.badge) {
+                const badge = document.createElement('img');
+                badge.src = author.badge.thumbnail.url;
+                meta.appendChild(badge)
+            }
+            meta.innerHTML += author.name
+            const messageContent = document.createElement('span');
+            for(let i = 0; i < messageArr.length; i++) {
+                for(key in messageArr[i]) {
+                    
+                    if(key == 'text') {
+                        let msgPart = document.createElement('span');
+                        msgPart.innerText = messageArr[i][key]
+                        messageContent.appendChild(msgPart);
+                    }
+                    if(key == 'url') {
+                        let msgEmote = document.createElement('img');
+                        msgEmote.src = messageArr[i][key];
+                        messageContent.appendChild(msgEmote);
+                    }
+                }
+            }
+            chatDiv.appendChild(messageContent);
+            document.body.appendChild(chatDiv);
+        }
+        chatSocket.onopen = function() {
+            startChat()
+        }
+        function startChat() {
+            chatSocket.send(JSON.stringify(params));
+        }
+    </script>
+</html>
