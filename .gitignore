@@ -1,1 +1,5 @@
 node_modules
+oauth2.keys.json
+tokens
+newTokens
+tmi.credentials.json

@@ -7,9 +7,10 @@
     </body>
 
     <script defer>
-        const id = 'jfKfPfyJRdk';//Either the channel ID or the live stream id. There is some logic to determine which. 
-        const chatSocket = new WebSocket('ws://127.0.0.1:8080')
-        const params = {id: id}
+        const channelName = 'Alexankitty';//Either the channel ID, ChannelName or the live stream id. There is some logic to determine which. 
+        const chatSocket = new WebSocket('ws://127.0.0.1:8081')
+        const forward = 'alexankitty'
+        const params = {channelName: channelName, forward: forward}
         chatSocket.onmessage = function(message){
             if(message.data == 'Connected') {
                 console.log(message.data);
@@ -32,6 +33,7 @@
             const parsedMsg = JSON.parse(message.data.toString());//I don't want to know why this has to be moved to a string even though it's already a string.
             const author = parsedMsg.author;
             const messageArr = parsedMsg.message;//this is wrapped not sure why
+            console.log(parsedMsg.message)
             const chatDiv = document.createElement('div');
             const meta = document.createElement('span');
             chatDiv.appendChild(meta);
