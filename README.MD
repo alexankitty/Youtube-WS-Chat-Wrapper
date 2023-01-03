@@ -1,6 +1,6 @@
 # Youtube-WS-Chat-Wrapper
-This project is designed to be used with my other project Holo-Chat. Due to google thinking 43 seconds is enough time to query the API for live chat messages, currently this is the ideal way to implement this without making the CORS gods angry.  
-This software is fairly untested, use at your own risk.
+This project is designed to be used with my other project [Holo-Chat](https://github.com/alexankitty/Holo-Chat). Due to google thinking 43 seconds is enough time to query the API for live chat messages, currently this is the ideal way to implement this without making the CORS gods angry.  
+This software is alpha quality, use at your own risk.
 
 ## Basic Directions
 * Run the following commands to install the necessary dependencies.
