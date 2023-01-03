@@ -1,17 +1,13 @@
 {
   "type": "module",
   "dependencies": {
-    "@eslym/youtube-chat": "^2.2.9",
     "googleapis": "^110.0.0",
-    "headless-google-auth": "^0.2.1",
-    "nightmare": "^3.0.2",
     "open": "^8.4.0",
     "server-destroy": "^1.0.1",
     "tmi.js": "^1.8.5",
     "uuid": "^9.0.0",
     "ws": "^8.11.0",
-    "youtube-chat": "^2.2.0",
-    "youtube-chat-api": "^1.0.2"
+    "youtube-chat": "^2.2.0"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.7",
