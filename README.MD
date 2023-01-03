@@ -29,4 +29,4 @@ or substitute accordingly with yarn.
 * Start the program with `node app.js`
 * The program should open your web browser and being oauth, if it can't be opened it'll also post the oauth link in the terminal window and listen for the token.
 * Test it out with the included ytchat.html. Set the id to either the channel id you wish to observer or the live stream id. The server will attempt to figure it out.
-
+* Recommendation: Use something like [NSSM](https://nssm.cc/) to install as a service. Point application to your node path, working directory to where you cloned this repo, and argument to app.js. Makesure to also set stdout and stderr to output.log in the same folder so you can still see the output. Lastly make sure it replaces the file so it doesn't get too large.
