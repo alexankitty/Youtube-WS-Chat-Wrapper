@@ -3,3 +3,4 @@ oauth2.keys.json
 tokens
 newTokens
 tmi.credentials.json
+channels.json

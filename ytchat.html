@@ -7,27 +7,34 @@
     </body>
 
     <script defer>
-        const channelName = 'Alexankitty';//Either the channel ID, ChannelName or the live stream id. There is some logic to determine which. 
+        const channelName = 'UCLEp3wddELKq2X7O03F5-RA';//Either the channel ID, ChannelName or the live stream id. There is some logic to determine which. 
         const chatSocket = new WebSocket('ws://127.0.0.1:8081')
         const forward = 'alexankitty'
-        const params = {channelName: channelName, forward: forward}
+        const params = {id: channelName, forward: forward}
         chatSocket.onmessage = function(message){
+            console.log(message)
             if(message.data == 'Connected') {
                 console.log(message.data);
                 return;
             }
             switch(message.data){
                 case "400":
-                    console.log("Bad request: Live stream may be unavailable, attempting to retry.")
-                    setTimeout(startChat, 5000) //Retrying after 5 seconds.
+                    console.log("Bad request: Live stream may be unavailable")
+                    //setTimeout(startChat, 5000) //Retrying after 5 seconds.
+                    return;
                 break;
                 case "401":
                     console.log("Malformed data received by server.")
                     chatSocket.close();
+                    return;
                 break;
+                case "404":
+                    console.log("Livechat not found, server will retry in 5 seconds.")
+                    return;
                 case "503":
                     console.log("Too many connections, closing");
                     chatSocket.close();
+                    return;
                 break;
             }
             const parsedMsg = JSON.parse(message.data.toString());//I don't want to know why this has to be moved to a string even though it's already a string.
