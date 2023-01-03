@@ -37,12 +37,12 @@ const wss = new WebSocketServer({
 
 const ytc = new YoutubeChat("./oauth2.keys.json", "tokens");
 var tmiIdentity;
-var knownIds;
+var knownIds = new Object;
 try{
   let rawData = FS.readFileSync('./tmi.credentials.json');
   tmiIdentity = JSON.parse(rawData);
   if(FS.existsSync('./channels.json')){
-    let channelsRaw = FS.readFileSync('')
+    let channelsRaw = FS.readFileSync('./channels.json')
     knownIds = JSON.parse(channelsRaw);
   }
 }
@@ -78,6 +78,7 @@ wss.on('connection', function connection(ws, req) {
     ws.uuid = uuidv4();
     ws.waiting = true;
     ws.isAlive = true;
+    ws.livechatStart = false;
     ws.tmiMessage = new Object;
     ws.send("Connected");
     ws.on('pong', heartbeat);
@@ -85,21 +86,40 @@ wss.on('connection', function connection(ws, req) {
       ws.on('close', async function close() {
         console.log(`Connection closed: ${ws.ip}`)
         clearInterval(interval);
-        ws.liveChat.stop();
-        tmiClient.part(ws.twitchChannel)
-        tmiClient.off("message", ws.tmiMessage[ws.uuid]);
+        if(ws.livechatStart) {
+          ws.liveChat.stop();
+          tmiClient.part(ws.twitchChannel)
+          tmiClient.off("message", ws.tmiMessage[ws.uuid]);
+        }
       });
       ws.on('message', async function message(data) {
         try{
         const params = JSON.parse(data);
         ws.twitchChannel = params.forward;
         if(params.channelName) {
-          if(!knownIds[params.channelName]){
+          if(typeof knownIds[params.channelName] == 'undefined'){
             knownIds[params.channelName] = await ytc.getChannelId(params.channelName);
-            FS.writeSync('./channels.json', JSON.stringify(knownIds, null, 2));
+            FS.writeFileSync('./channels.json', JSON.stringify(knownIds, null, 2));
           }
           params.id = knownIds[params.channelName]
         }
+        if(params.id.length == 24 && params.id.startsWith("UC")){
+          ws.liveChat = new LiveChat({channelId: params.id})
+        }
+        else{
+            ws.liveChat = new LiveChat({liveId: params.id})
+        }
+        try{
+          await ws.liveChat.start()
+        }
+        catch(e){
+          console.error(e)
+          ws.send("400");
+          ws.close();
+          return;
+        }
+        ws.livechatStart = true;
+        ws.youtubeChatId = await ytc.getLatestChatId(params.id);
         if(ws.twitchChannel){
           ws.tmiMessage[ws.uuid] = (channel, userstate, message, self) => {
             if(self) return;
@@ -111,32 +131,15 @@ wss.on('connection', function connection(ws, req) {
                 message = `*${message}*`
               }
               message = `[Twitch] ${userstate['display-name']}: ${message}`
-              ytc.sendMessage(message, channelName)
+              ytc.sendMessage(message, ws.youtubeChatId)
             }
           }
           tmiClient.join(ws.twitchChannel)
           tmiClient.on("message", ws.tmiMessage[ws.uuid])
         }
-        if(params.id.length == 24 && params.id.startsWith("UC")){
-            ws.liveChat = new LiveChat({channelId: params.id})
-        }
-        else{
-            ws.liveChat = new LiveChat({liveId: params.id})
-        }
         setTimeout(() => {
           ws.waiting = false;//wait 5 seconds before we actually send messages so that the old stuff isn't sent.
         }, 5000);
-        let ok;
-        try{
-          ok = await ws.liveChat.start()
-        }
-        catch(e){
-          ws.send("400");
-          ws.close();
-        }
-        if (!ok) {
-          ws.send(`400`)
-        }
         ws.liveChat.on("chat", (chatItem) => {
             if(ws.waiting) return;
 
@@ -150,6 +153,11 @@ wss.on('connection', function connection(ws, req) {
           })
         ws.liveChat.on("error", (err) => {
             ws.send(JSON.stringify(err));
+        })
+        ws.liveChat.on("end", (reason) => {
+          console.log(reason);
+          ws.send("410");
+          ws.close();
         })
         }
         catch(e){
