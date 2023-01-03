@@ -27,5 +27,6 @@ or substitute accordingly with yarn.
 14. Finish up setup with [Holo-Chat](https://github.com/alexankitty/Holo-Chat)
 
 * Start the program with `node app.js`
+* The program should open your web browser and being oauth, if it can't be opened it'll also post the oauth link in the terminal window and listen for the token.
 * Test it out with the included ytchat.html. Set the id to either the channel id you wish to observer or the live stream id. The server will attempt to figure it out.
 
