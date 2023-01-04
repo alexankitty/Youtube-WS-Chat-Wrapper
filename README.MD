@@ -27,6 +27,7 @@ or substitute accordingly with yarn.
 14. Finish up setup with [Holo-Chat](https://github.com/alexankitty/Holo-Chat)
 
 * Start the program with `node app.js`
-* The program should open your web browser and being oauth, if it can't be opened it'll also post the oauth link in the terminal window and listen for the token.
+* The program should open your web browser and begin oauth, if it can't be opened it'll also post the oauth link in the terminal window and listen for the token.
+* If the standard oauth flow isn't an option/isn't working, you can get a refresh token from [Google's OAuth Playground](https://developers.google.com/oauthplayground/) and click the settings gear at the top right and input your own OAuth credentials (you will need to pull these out from your json file you downloaded earlier. You will want to place your refresh token in a file called tokens. This application does not save the auth token, only the refresh token.
 * Test it out with the included ytchat.html. Set the id to either the channel id you wish to observer or the live stream id. The server will attempt to figure it out.
 * Recommendation: Use something like [NSSM](https://nssm.cc/) to install as a service. Point application to your node path, working directory to where you cloned this repo, and argument to app.js. Makesure to also set stdout and stderr to output.log in the same folder so you can still see the output. Lastly make sure it replaces the file so it doesn't get too large.
