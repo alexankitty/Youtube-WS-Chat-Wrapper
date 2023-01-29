@@ -104,11 +104,16 @@ wss.on('connection', function connection(ws, req) {
           params.id = knownIds[params.channelName]
         }
         if(params.id.length == 24 && params.id.startsWith("UC")){
-          ws.liveChat = new LiveChat({channelId: params.id})
+            ws.liveChat = new LiveChat({channelId: params.id})
         }
         else{
             ws.liveChat = new LiveChat({liveId: params.id})
         }
+        ws.liveChat.on("start", async (liveId) => {          
+          ws.liveId = liveId;
+          ws.livechatStart = true;
+          ws.youtubeChatId = await ytc.getChatId(ws.liveId);
+        })
         try{
           await ws.liveChat.start()
         }
@@ -118,8 +123,7 @@ wss.on('connection', function connection(ws, req) {
           ws.close();
           return;
         }
-        ws.livechatStart = true;
-        ws.youtubeChatId = await ytc.getLatestChatId(params.id);
+        
         if(ws.twitchChannel){
           ws.tmiMessage[ws.uuid] = (channel, userstate, message, self) => {
             if(self) return;
@@ -157,6 +161,10 @@ wss.on('connection', function connection(ws, req) {
         ws.liveChat.on("end", (reason) => {
           console.log(reason);
           ws.send("410");
+          ws.liveChat.stop();
+          tmiClient.part(ws.twitchChannel)
+          tmiClient.off("message", ws.tmiMessage[ws.uuid]);
+          ws.livechatStart = false;
           ws.close();
         })
         }
