@@ -35,3 +35,6 @@ or substitute accordingly with yarn.
 ## Known Issues
 1. API Cost. It's 21 quota to send a message. You're guaranteed to blow through this in roughly 500 messages. The only fix for this is to increase the quota limit, which I think is unlikely to receive approval. 
 2. Upon multiple connections it's possible to cause tmi to double part resulting in an unresolved promise. I don't think this is an actual issue, and to fix it would require way too much refactoring.
+
+## Miscellaneous
+* There's an included html page for an example of building your own overlay to receive chat from if that's something you're interested in. You can also look over the implementation [Holo-Chat](https://github.com/alexankitty/Holo-Chat) uses.
