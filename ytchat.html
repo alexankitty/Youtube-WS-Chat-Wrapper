@@ -7,10 +7,10 @@
     </body>
 
     <script defer>
-        const channelName = 'UCLEp3wddELKq2X7O03F5-RA';//
+        const channelName = 'alexankitty';//
         const chatSocket = new WebSocket('ws://127.0.0.1:8081')
         const forward = 'alexankitty'
-        const params = {channelName: channelName, forward: forward} //If you want to use a livestream ID instead to test with, change channelName to Id. Remove forward if you don't want it sending messages to your twitch chat.
+        const params = {channelName: channelName, forward: forward} //If you want to use a livestream ID or channel ID instead to test with, change channelName to Id. Remove forward if you don't want it sending messages to your twitch chat.
         chatSocket.onmessage = function(message){
             console.log(message)
             if(message.data == 'Connected') {
